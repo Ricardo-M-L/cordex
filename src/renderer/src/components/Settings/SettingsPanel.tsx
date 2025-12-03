@@ -8,8 +8,10 @@ const models = {
         { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' }
     ],
     anthropic: [
+        { id: 'claude-sonnet-4-5-20250514', name: 'Claude Sonnet 4.5' },
         { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
         { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus' },
+        { id: 'claude-haiku-4-20250514', name: 'Claude Haiku 4' },
         { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' }
     ],
     deepseek: [
@@ -21,6 +23,11 @@ const models = {
         { id: 'qwen-plus', name: 'Qwen Plus' },
         { id: 'qwen-turbo', name: 'Qwen Turbo' }
     ],
+    gemini: [
+        { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash' },
+        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
+    ],
     ollama: [] as Array<{ id: string, name: string }>
 }
 
@@ -29,12 +36,13 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-    const [provider, setProvider] = useState<'openai' | 'anthropic' | 'ollama' | 'deepseek' | 'qwen'>('ollama')
+    const [provider, setProvider] = useState<'openai' | 'anthropic' | 'ollama' | 'deepseek' | 'qwen' | 'gemini'>('ollama')
     const [model, setModel] = useState('')
     const [openaiKey, setOpenaiKey] = useState('')
     const [anthropicKey, setAnthropicKey] = useState('')
     const [deepseekKey, setDeepseekKey] = useState('')
     const [qwenKey, setQwenKey] = useState('')
+    const [geminiKey, setGeminiKey] = useState('')
     const [ollamaUrl, setOllamaUrl] = useState('http://binary.xin:11434')
     const [ollamaModels, setOllamaModels] = useState<Array<{ id: string, name: string }>>([])
     const [loading, setLoading] = useState(true)
@@ -67,6 +75,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             setAnthropicKey(config.anthropicApiKey || '')
             setDeepseekKey(config.deepseekApiKey || '')
             setQwenKey(config.qwenApiKey || '')
+            setGeminiKey(config.geminiApiKey || '')
             setOllamaUrl(config.ollamaBaseUrl || 'http://binary.xin:11434')
 
             // 如果是 Ollama，加载模型列表
@@ -106,11 +115,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
         try {
             await window.api.setConfig('selectedProvider', provider)
             await window.api.setConfig('selectedModel', model)
-            if (openaiKey) await window.api.setConfig('openaiApiKey', openaiKey)
-            if (anthropicKey) await window.api.setConfig('anthropicApiKey', anthropicKey)
-            if (deepseekKey) await window.api.setConfig('deepseekApiKey', deepseekKey)
-            if (qwenKey) await window.api.setConfig('qwenApiKey', qwenKey)
-            if (ollamaUrl) await window.api.setConfig('ollamaBaseUrl', ollamaUrl)
+            if (openaiKey) await window.api.setConfig('openaiApiKey', openaiKey.trim())
+            if (anthropicKey) await window.api.setConfig('anthropicApiKey', anthropicKey.trim())
+            if (deepseekKey) await window.api.setConfig('deepseekApiKey', deepseekKey.trim())
+            if (qwenKey) await window.api.setConfig('qwenApiKey', qwenKey.trim())
+            if (geminiKey) await window.api.setConfig('geminiApiKey', geminiKey.trim())
+            if (ollamaUrl) await window.api.setConfig('ollamaBaseUrl', ollamaUrl.trim())
             onClose()
         } catch (error) {
             console.error('Failed to save config:', error)
@@ -157,6 +167,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                         <option value="anthropic">Anthropic (Claude)</option>
                         <option value="deepseek">DeepSeek</option>
                         <option value="qwen">Qwen (通义千问)</option>
+                        <option value="gemini">Google Gemini</option>
                     </select>
                 </div>
 

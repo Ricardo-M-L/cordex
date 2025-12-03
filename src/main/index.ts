@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, session } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -117,6 +117,15 @@ app.whenReady().then(() => {
 
     ipcMain.handle('config:getAll', () => {
         return store.store
+    })
+
+    // Permission handling for microphone (Voice Input)
+    session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+        if (permission === 'media') {
+            callback(true)
+        } else {
+            callback(false)
+        }
     })
 
     // Ollama API

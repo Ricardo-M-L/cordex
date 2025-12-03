@@ -20,8 +20,10 @@ const MODELS = {
         { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' }
     ],
     anthropic: [
+        { id: 'claude-sonnet-4-5-20250514', name: 'Claude Sonnet 4.5' },
         { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
         { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus' },
+        { id: 'claude-haiku-4-20250514', name: 'Claude Haiku 4' },
         { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' }
     ],
     deepseek: [
@@ -32,6 +34,11 @@ const MODELS = {
         { id: 'qwen-max', name: 'Qwen Max' },
         { id: 'qwen-plus', name: 'Qwen Plus' },
         { id: 'qwen-turbo', name: 'Qwen Turbo' }
+    ],
+    gemini: [
+        { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash' },
+        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
     ],
     ollama: [] as Array<{ id: string, name: string }> // 动态加载
 }
@@ -53,7 +60,7 @@ const ChatInterface: React.FC = () => {
 
     // 新增状态
     const [isListening, setIsListening] = useState(false)
-    const [currentProvider, setCurrentProvider] = useState<'openai' | 'anthropic' | 'ollama' | 'deepseek' | 'qwen'>('ollama')
+    const [currentProvider, setCurrentProvider] = useState<'openai' | 'anthropic' | 'ollama' | 'deepseek' | 'qwen' | 'gemini'>('ollama')
     const [currentModel, setCurrentModel] = useState('gemma2:2b')
     const [ollamaModels, setOllamaModels] = useState<Array<{ id: string, name: string }>>([])
     const recognitionRef = useRef<any>(null)
@@ -305,6 +312,18 @@ const ChatInterface: React.FC = () => {
                                     <button
                                         key={m.id}
                                         onClick={() => handleModelChange('qwen', m.id)}
+                                        className={`w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent ${currentModel === m.id ? 'bg-accent text-accent-foreground' : ''}`}
+                                    >
+                                        {m.name}
+                                    </button>
+                                ))}
+
+                                <div className="my-1 border-t border-border"></div>
+                                <div className="text-xs font-semibold text-muted-foreground mb-1 px-2 mt-1">Gemini</div>
+                                {MODELS.gemini.map(m => (
+                                    <button
+                                        key={m.id}
+                                        onClick={() => handleModelChange('gemini', m.id)}
                                         className={`w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent ${currentModel === m.id ? 'bg-accent text-accent-foreground' : ''}`}
                                     >
                                         {m.name}
