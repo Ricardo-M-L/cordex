@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Send, Bot, User, Sparkles, Settings, Mic, MicOff, Image as ImageIcon, AtSign, ChevronDown, Loader2 } from 'lucide-react'
+import { Send, Bot, User, Sparkles, Settings, Mic, MicOff, Image as ImageIcon, AtSign, ChevronDown, Loader2, Square } from 'lucide-react'
 import SettingsPanel from '../Settings/SettingsPanel'
 import ReactMarkdown from 'react-markdown'
 
@@ -172,6 +172,14 @@ const ChatInterface: React.FC = () => {
         } catch (error) {
             console.error('Failed to change model:', error)
         }
+    }
+
+    const handleStop = () => {
+        if (cleanupRef.current) {
+            cleanupRef.current()
+            cleanupRef.current = null
+        }
+        setIsTyping(false)
     }
 
     const handleSend = async () => {
@@ -459,13 +467,23 @@ const ChatInterface: React.FC = () => {
                                 {isListening ? <MicOff size={18} /> : <Mic size={18} />}
                             </button>
 
-                            <button
-                                onClick={handleSend}
-                                disabled={(!input.trim() && !selectedImage) || isTyping}
-                                className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                {isTyping ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                            </button>
+                            {isTyping ? (
+                                <button
+                                    onClick={handleStop}
+                                    className="p-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors"
+                                    title="Stop Generation"
+                                >
+                                    <Square size={16} fill="currentColor" />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleSend}
+                                    disabled={!input.trim() && !selectedImage}
+                                    className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <Send size={16} />
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
