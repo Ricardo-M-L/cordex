@@ -23,6 +23,12 @@ const api = {
     // Ollama API
     listOllamaModels: (baseUrl: string) => ipcRenderer.invoke('ollama:listModels', baseUrl),
 
+    // Plugin API
+    listPlugins: () => ipcRenderer.invoke('plugin:list'),
+    addPlugin: (plugin: any) => ipcRenderer.invoke('plugin:add', plugin),
+    removePlugin: (pluginId: string) => ipcRenderer.invoke('plugin:remove', pluginId),
+    togglePlugin: (pluginId: string) => ipcRenderer.invoke('plugin:toggle', pluginId),
+
     // Terminal API - Temporarily disabled
     // createTerminal: () => ipcRenderer.send('terminal:create'),
     // writeTerminal: (data: string) => ipcRenderer.send('terminal:write', data),

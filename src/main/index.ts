@@ -141,6 +141,38 @@ app.whenReady().then(() => {
         }
     })
 
+    // Plugin Management
+    ipcMain.handle('plugin:list', () => {
+        return { success: true, plugins: store.getPlugins() }
+    })
+
+    ipcMain.handle('plugin:add', (_, plugin) => {
+        try {
+            store.addPlugin(plugin)
+            return { success: true }
+        } catch (error: any) {
+            return { success: false, error: error.message }
+        }
+    })
+
+    ipcMain.handle('plugin:remove', (_, pluginId: string) => {
+        try {
+            store.removePlugin(pluginId)
+            return { success: true }
+        } catch (error: any) {
+            return { success: false, error: error.message }
+        }
+    })
+
+    ipcMain.handle('plugin:toggle', (_, pluginId: string) => {
+        try {
+            store.togglePlugin(pluginId)
+            return { success: true }
+        } catch (error: any) {
+            return { success: false, error: error.message }
+        }
+    })
+
     // Terminal IPC - Temporarily disabled due to node-pty compatibility issues
     /*
     let ptyProcess: any = null

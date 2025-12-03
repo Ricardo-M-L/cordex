@@ -2,15 +2,31 @@ import { app } from 'electron'
 import { join } from 'path'
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 
+export interface Plugin {
+    id: string
+    name: string
+    version: string
+    enabled: boolean
+    author?: string
+    description?: string
+}
+
 export interface StoreSchema {
     openaiApiKey?: string
     anthropicApiKey?: string
     deepseekApiKey?: string
     qwenApiKey?: string
+    geminiApiKey?: string
     ollamaBaseUrl?: string
     ollamaModel?: string
-    selectedProvider: 'openai' | 'anthropic' | 'ollama' | 'deepseek' | 'qwen'
+    selectedProvider: 'openai' | 'anthropic' | 'ollama' | 'deepseek' | 'qwen' | 'gemini'
     selectedModel: string
+    theme?: 'dark' | 'light'
+    fontSize?: number
+    autoSave?: boolean
+    defaultLayout?: 'agent' | 'editor'
+    enableSuggestions?: boolean
+    plugins?: Plugin[]
 }
 
 class ConfigStore {
@@ -50,7 +66,13 @@ class ConfigStore {
         return {
             selectedProvider: 'ollama',
             selectedModel: 'gemma2:2b',
-            ollamaBaseUrl: 'http://binary.xin:11434'
+            ollamaBaseUrl: 'http://binary.xin:11434',
+            theme: 'dark',
+            fontSize: 14,
+            autoSave: true,
+            defaultLayout: 'agent',
+            enableSuggestions: true,
+            plugins: []
         }
     }
 
@@ -65,6 +87,42 @@ class ConfigStore {
 
     get store(): StoreSchema {
         return { ...this.data }
+    }
+
+    // Plugin management methods
+    addPlugin(plugin: Plugin): void {
+        const plugins = this.data.plugins || []
+        const existingIndex = plugins.findIndex(p => p.id === plugin.id)
+
+        if (existingIndex >= 0) {
+            plugins[existingIndex] = plugin
+        } else {
+            plugins.push(plugin)
+        }
+
+        this.data.plugins = plugins
+        this.save()
+    }
+
+    removePlugin(pluginId: string): void {
+        const plugins = this.data.plugins || []
+        this.data.plugins = plugins.filter(p => p.id !== pluginId)
+        this.save()
+    }
+
+    togglePlugin(pluginId: string): void {
+        const plugins = this.data.plugins || []
+        const plugin = plugins.find(p => p.id === pluginId)
+
+        if (plugin) {
+            plugin.enabled = !plugin.enabled
+            this.data.plugins = plugins
+            this.save()
+        }
+    }
+
+    getPlugins(): Plugin[] {
+        return this.data.plugins || []
     }
 }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Settings, Key, X, RefreshCw, User, Zap, FileText, Network, Code, Keyboard, Layout, Sparkles } from 'lucide-react'
+import { Settings, Key, X, RefreshCw, User, Zap, FileText, Network, Code, Keyboard, Layout, Sparkles, Package } from 'lucide-react'
+import PluginManager from './PluginManager'
 
 const models = {
     openai: [
@@ -36,7 +37,7 @@ interface SettingsPanelProps {
     onClose: () => void
 }
 
-type TabType = 'general' | 'models' | 'editor' | 'shortcuts' | 'advanced'
+type TabType = 'general' | 'models' | 'editor' | 'shortcuts' | 'plugins' | 'advanced'
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState<TabType>('general')
@@ -142,6 +143,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
         { id: 'models' as TabType, name: '模型配置', icon: Sparkles },
         { id: 'editor' as TabType, name: '编辑器', icon: Code },
         { id: 'shortcuts' as TabType, name: '快捷键', icon: Keyboard },
+        { id: 'plugins' as TabType, name: '插件', icon: Package },
         { id: 'advanced' as TabType, name: '高级设置', icon: Zap }
     ]
 
@@ -182,8 +184,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`w-full text-left px-3 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${activeTab === tab.id
-                                            ? 'bg-primary/10 text-primary font-medium'
-                                            : 'hover:bg-secondary text-muted-foreground'
+                                        ? 'bg-primary/10 text-primary font-medium'
+                                        : 'hover:bg-secondary text-muted-foreground'
                                         }`}
                                 >
                                     <Icon size={16} />
@@ -208,8 +210,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                                                 <button
                                                     onClick={() => setDefaultLayout('agent')}
                                                     className={`flex-1 p-3 rounded-lg border-2 transition-all ${defaultLayout === 'agent'
-                                                            ? 'border-primary bg-primary/10'
-                                                            : 'border-border hover:border-primary/50'
+                                                        ? 'border-primary bg-primary/10'
+                                                        : 'border-border hover:border-primary/50'
                                                         }`}
                                                 >
                                                     <div className="text-center">
@@ -221,8 +223,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                                                 <button
                                                     onClick={() => setDefaultLayout('editor')}
                                                     className={`flex-1 p-3 rounded-lg border-2 transition-all ${defaultLayout === 'editor'
-                                                            ? 'border-primary bg-primary/10'
-                                                            : 'border-border hover:border-primary/50'
+                                                        ? 'border-primary bg-primary/10'
+                                                        : 'border-border hover:border-primary/50'
                                                         }`}
                                                 >
                                                     <div className="text-center">
@@ -610,6 +612,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                                     </div>
                                 </div>
                             </div>
+                        )}
+
+                        {/* Plugins Tab */}
+                        {activeTab === 'plugins' && (
+                            <PluginManager />
                         )}
                     </div>
                 </div>
